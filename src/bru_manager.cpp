@@ -10,7 +10,7 @@ BRUManager::BRUManager(uint32_t nDomains, uint32_t nBanks, uint32_t nCPUs, bool 
     }
 
     // Map physical memory into the process's address space
-    m_RegBase = (uint64_t)mmap(NULL, 0x800, PROT_READ | PROT_WRITE, MAP_SHARED, m_DevMemfd, regBaseAddress);
+    m_RegBase = (uint64_t)mmap(NULL, MAX_OFFSET, PROT_READ | PROT_WRITE, MAP_SHARED, m_DevMemfd, regBaseAddress);
     if (m_RegBase == (uint64_t)MAP_FAILED) {
         perror("mmap");
         close(m_DevMemfd);
@@ -24,6 +24,36 @@ BRUManager::BRUManager(uint32_t nDomains, uint32_t nBanks, uint32_t nCPUs, bool 
     m_Settings_EnableWritebackThrottle = m_Settings_CountInstrutionFetch + 0x1;
     m_Settings_CountPuts = m_Settings_EnableWritebackThrottle + 0x1;
     m_RegulationPeriodLength = m_RegBase + 0x10;
+}
+
+BRUManager::BRUManager(uint64_t regBaseAddress)
+{
+    m_DevMemfd = open("/dev/mem", O_RDWR | O_SYNC);
+    if (m_DevMemfd == -1) {
+        perror("open");
+        exit(EXIT_FAILURE);
+    }
+
+    // Map physical memory into the process's address space
+    m_RegBase = (uint64_t)mmap(NULL, MAX_OFFSET, PROT_READ | PROT_WRITE, MAP_SHARED, m_DevMemfd, regBaseAddress);
+    if (m_RegBase == (uint64_t)MAP_FAILED) {
+        perror("mmap");
+        close(m_DevMemfd);
+        exit(EXIT_FAILURE);
+    }
+
+    m_EnableBRUGlobal = m_RegBase;
+    m_Settings_CountInstrutionFetch = m_RegBase + 0x8;
+    m_Settings_EnableWritebackThrottle = m_Settings_CountInstrutionFetch + 0x1;
+    m_Settings_CountPuts = m_Settings_EnableWritebackThrottle + 0x1;
+    m_RegulationPeriodLength = m_RegBase + 0x10;
+
+
+    uint64_t MAX_ADDR = m_RegBase + MAX_OFFSET;
+    m_nBanks = READ_UINT32(MAX_ADDR-0x4);
+    m_nDomains = READ_UINT32(MAX_ADDR-0X8);
+    m_nCPUs = READ_UINT32(MAX_ADDR-0XC);
+    m_bWithMonitor = READ_BOOL(MAX_ADDR-0X10);
 }
 
 BRUManager::~BRUManager()

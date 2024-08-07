@@ -28,6 +28,7 @@ class BRUManager
 {
 public:
     BRUManager(uint32_t nDomains, uint32_t nBanks, uint32_t nCPUs, bool withMonitor=true, uint64_t regBaseAddress=0x20000000ULL);
+    BRUManager(uint64_t regBaseAddress=0x20000000ULL);
     ~BRUManager();
     void SetRegulationPeriod(uint32_t periodLen);
     void EnableGlobal(bool enable);

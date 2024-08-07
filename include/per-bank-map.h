@@ -3,6 +3,7 @@
 
 #define BASE 0x20000000ULL // Reg-map base address
 #define MAX  0x20000800ULL // Reg-map max address
+#define MAX_OFFSET 0x800ULL
 #define NUM_REGS ( ( MAX - BASE ) / 8 ) // Assumes 8 byte fields, bit weird
 
 #ifndef N_BANKS
