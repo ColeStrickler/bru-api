@@ -97,7 +97,7 @@ void BRUManager::SetDomainMaxReads(uint16_t domain, uint32_t nAccesses)
 
 uint32_t BRUManager::ReadDomainMaxReads(uint16_t domain) const {
     assert(domain < m_nDomains);
-
+    printf("Offset 0x%x\n", MAX_READ(domain));
     uint64_t domainAccessCounterAddr = m_RegBase + MAX_READ(domain);
     return READ_UINT32(domainAccessCounterAddr);
 }
@@ -105,7 +105,7 @@ uint32_t BRUManager::ReadDomainMaxReads(uint16_t domain) const {
 void BRUManager::SetDomainMaxWrites(uint16_t domain, uint32_t nWrites) 
 {
     assert(domain < m_nDomains);
-
+    printf("Offset 0x%x\n", MAX_PUT(domain));
     uint64_t domainWriteCounterAddr = m_RegBase + MAX_PUT(domain);
     WRITE_UINT32(domainWriteCounterAddr, nWrites);
 }
@@ -113,7 +113,7 @@ void BRUManager::SetDomainMaxWrites(uint16_t domain, uint32_t nWrites)
 uint32_t BRUManager::ReadDomainMaxWrites(uint16_t domain) const 
 {
     assert(domain < m_nDomains);
-
+    printf("Offset 0x%x\n", MAX_PUT(domain));
     uint64_t domainWriteCounterAddr = m_RegBase + MAX_PUT(domain);
     return READ_UINT32(domainWriteCounterAddr);
 }
@@ -121,7 +121,7 @@ uint32_t BRUManager::ReadDomainMaxWrites(uint16_t domain) const
 void BRUManager::SetDomainMaxWritebacks(uint16_t domain, uint32_t nWritebacks) 
 {
     assert(domain < m_nDomains);
-
+    printf("Offset 0x%x\n", MAX_WB(domain));
     uint64_t domainWritebackCounterAddr = m_RegBase + MAX_WB(domain);
     WRITE_UINT32(domainWritebackCounterAddr, nWritebacks);
 }
@@ -129,7 +129,7 @@ void BRUManager::SetDomainMaxWritebacks(uint16_t domain, uint32_t nWritebacks)
 uint32_t BRUManager::ReadDomainMaxWritebacks(uint16_t domain) 
 {
     assert(domain < m_nDomains);
-
+    printf("Offset 0x%x\n", MAX_WB(domain));
     uint64_t domainWritebackCounterAddr = m_RegBase + MAX_WB(domain);
     return READ_UINT32(domainWritebackCounterAddr);
 }
@@ -138,22 +138,30 @@ void BRUManager::EnableClientRegulation(uint32_t client_no, bool enable)
 {
     assert(client_no < m_nCPUs);
 
-    uint64_t clientEnableRegulationAddr = m_RegBase + CLIENT_EN(client_no);
-    WRITE_BOOL(clientEnableRegulationAddr, enable);
+
+    printf("Offset 0x%x\n enable %d", CLIENT_EN_OFFSET, enable);
+    uint64_t clientEnableRegulationAddr = m_RegBase + CLIENT_EN_OFFSET;
+    uint64_t value = READ_UINT64(clientEnableRegulationAddr);
+    printf("value before 0x%x\n", value);
+    value &= ~(1 << client_no); // unset client no
+    value |= (enable << client_no); // set bit to enable
+    printf("after 0x%x\n", value); 
+    WRITE_UINT64(clientEnableRegulationAddr, value);
 }
 
 bool BRUManager::ReadEnableClientRegulation(uint32_t client_no) {
     assert(client_no < m_nCPUs);
-    uint64_t clientEnableRegulationAddr = m_RegBase + CLIENT_EN(client_no);
-
-    return READ_BOOL(clientEnableRegulationAddr);
+    uint64_t clientEnableRegulationAddr = m_RegBase + CLIENT_EN_OFFSET;
+    uint64_t value = READ_UINT64(clientEnableRegulationAddr);
+    
+    return (bool)((value >> client_no) & 0x1);
 }
 
 void BRUManager::SetClientDomainID(uint32_t client_no, uint16_t domain)
 {   
     assert(client_no < m_nCPUs);
     uint64_t clientDomainIDAddr = m_RegBase + CLIENT_DOMAIN(client_no);
-
+    printf("Offset 0x%x\n", CLIENT_DOMAIN(client_no));
     /*
         These registers are of size log2Ceil(nDomains) but they are spaced
         8 bytes apart so this should be fine
@@ -165,7 +173,7 @@ uint32_t BRUManager::ReadClientDomainID(uint32_t client_no)
 {
     assert(client_no < m_nCPUs);
     uint64_t clientDomainIDAddr = m_RegBase + CLIENT_DOMAIN(client_no);
-
+    printf("Offset 0x%x\n", CLIENT_DOMAIN(client_no));
     /*
         These registers are of size log2Ceil(nDomains) but they are spaced
         8 bytes apart so this should be fine

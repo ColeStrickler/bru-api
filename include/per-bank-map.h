@@ -14,12 +14,12 @@
 #define SETTINGS 1
 #define PERIOD_LEN 2
 
-#define MAX_READ(i) ( ( 24 + i * 4 )) // should this be 4 or 8
+#define MAX_READ(i) ( ( 24 + i * 8 ))
 #define MAX_PUT(i)  ( ( 24 + 8 * m_nDomains + i * 8 ) )
 #define MAX_WB(i)   ( ( 24 + 2 * 8 * m_nDomains + i * 8 ))
 
 // Assuming you are reading 8 bytes at a time
-#define CLIENT_EN(i) ( ( 24 + 3 * 8 * m_nDomains + 8 * i ))
+#define CLIENT_EN_OFFSET ( ( 24 + 3 * 8 * m_nDomains ))
 
 #define CLIENT_DOMAIN(i) ( ( 48 + 3 * 8 * m_nDomains + i * 8 ))
 

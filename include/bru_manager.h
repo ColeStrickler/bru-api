@@ -22,8 +22,6 @@
 #define READ_UINT32(addr)(*(uint32_t*)addr)
 #define READ_UINT64(addr)(*(uint64_t*)addr)
 
-
-
 class BRUManager
 {
 public:
