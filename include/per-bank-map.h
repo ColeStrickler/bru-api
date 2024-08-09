@@ -10,9 +10,6 @@
 #define N_BANKS 2
 #endif
 
-#define GLOBAL_EN 0
-#define SETTINGS 1
-#define PERIOD_LEN 2
 
 #define MAX_READ(i) ( ( 24 + i * 8 ))
 #define MAX_PUT(i)  ( ( 24 + 8 * m_nDomains + i * 8 ) )

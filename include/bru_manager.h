@@ -10,23 +10,23 @@
 #include "per-bank-map.h"
 
 
-#define WRITE_BOOL(addr, value)(*(bool*)addr = value)
-#define WRITE_UINT8(addr, value)(*(uint8_t*)addr = value)
-#define WRITE_UINT16(addr, value)(*(uint16_t*)addr = value)
-#define WRITE_UINT32(addr, value)(*(uint32_t*)addr = value)
-#define WRITE_UINT64(addr, value)(*(uint64_t*)addr = value)
+#define WRITE_BOOL(addr, value)(*(bool*)(addr) = value)
+#define WRITE_UINT8(addr, value)(*(uint8_t*)(addr) = value)
+#define WRITE_UINT16(addr, value)(*(uint16_t*)(addr) = value)
+#define WRITE_UINT32(addr, value)(*(uint32_t*)(addr) = value)
+#define WRITE_UINT64(addr, value)(*(uint64_t*)(addr) = value)
 
-#define READ_BOOL(addr)(*(bool*)addr)
-#define READ_UINT8(addr)(*(uint8_t*)addr)
-#define READ_UINT16(addr)(*(uint16_t*)addr)
-#define READ_UINT32(addr)(*(uint32_t*)addr)
-#define READ_UINT64(addr)(*(uint64_t*)addr)
+#define READ_BOOL(addr)(*(bool*)(addr))
+#define READ_UINT8(addr)(*(uint8_t*)(addr))
+#define READ_UINT16(addr)(*(uint16_t*)(addr))
+#define READ_UINT32(addr)(*(uint32_t*)(addr))
+#define READ_UINT64(addr)(*(uint64_t*)(addr))
 
 class BRUManager
 {
 public:
     BRUManager(uint32_t nDomains, uint32_t nBanks, uint32_t nCPUs, bool withMonitor=true, uint64_t regBaseAddress=0x20000000ULL);
-    BRUManager(uint64_t regBaseAddress=0x20000000ULL);
+    BRUManager(uint64_t regBaseAddress=0x20000000ULL, bool debug=false);
     ~BRUManager();
     void SetRegulationPeriod(uint32_t periodLen);
     void EnableGlobal(bool enable);
@@ -58,6 +58,7 @@ public:
 
 
 private:
+    bool m_bDebug;
     int m_DevMemfd;
     uint64_t m_RegBase;
     uint32_t m_nDomains;
