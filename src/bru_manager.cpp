@@ -167,7 +167,7 @@ bool BRUManager::ReadEnableClientRegulation(uint32_t client_no) {
 
 void BRUManager::SetClientDomainID(uint32_t client_no, uint16_t domain)
 {   
-    assert(client_no < m_nCPUs);
+    assert(client_no < m_nCPUs && domain < m_nDomains);
     uint64_t clientDomainIDAddr = m_RegBase + CLIENT_DOMAIN(client_no);
     DEBUG_PRINT1("Offset 0x%x\n", CLIENT_DOMAIN(client_no));
     /*
@@ -209,6 +209,7 @@ uint32_t BRUManager::ReadPerformanceCountersPeriod()
 
 uint32_t BRUManager::ReadPerfCounter(uint16_t client_no, uint16_t bank)
 {
+    assert(client_no < m_nCPUs && bank < m_nBanks);
     uint64_t perfCounterAddr = m_RegBase + READ_CNTR(client_no, bank);
     return READ_UINT32(perfCounterAddr);
 }
